@@ -8,6 +8,7 @@ from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
 from sklearn.ensemble import RandomForestClassifier
 
+
 # Data is located at:
 path = "https://3366d6aa338e.ngrok.io/data.csv"
 

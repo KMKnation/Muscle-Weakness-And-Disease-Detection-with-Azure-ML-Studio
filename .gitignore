@@ -1,2 +1,4 @@
 venv
 dataset/data.csv
+.idea/
+.ipynb_checkpoints/

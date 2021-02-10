@@ -54,7 +54,27 @@ ds = TabularDatasetFactory.from_delimited_files(path,
 ```
 
 ## Automated ML
-*TODO*: Give an overview of the `automl` settings and configuration you used for this experiment
+We have used following setting to train an AutoML model.
+
+```python
+automl_settings = {
+    "experiment_timeout_minutes": 30,
+    "primary_metric": 'accuracy',
+    "n_cross_validations": 5,
+    "max_concurrent_iterations": 4,
+    "enable_early_stopping": True,
+    "enable_voting_ensemble": False,
+    "enable_stack_ensemble": False
+}
+
+automl_config = AutoMLConfig(task="classification",
+                            compute_target=cpu_cluster,
+                            training_data=ds,
+                            label_column_name="Output",
+                            **automl_settings)
+
+```
+As you can see in above config, Our primary metric is **accuracy** which is the target for AutoML to improve.
 
 ### Results
 *TODO*: What are the results you got with your automated ML model? What were the parameters of the model? How could you have improved it?
