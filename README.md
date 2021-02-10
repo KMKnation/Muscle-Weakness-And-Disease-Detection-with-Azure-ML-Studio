@@ -34,12 +34,18 @@ Here in this project, we are using HyperDrive and AutoML to train and to get the
 
 ### Access
 The dataset is private. Hence to make the use of getting the data from the thirdparty, we used ngrok to host the data like following URL.
+```python
 
-    path = "https://0547078f50ce.ngrok.io/data.csv"
+path = "https://0547078f50ce.ngrok.io/data.csv"
 
+```
 and then using **TabularDatasetFactory** to retrive the data in workspace.
 
-    ds = TabularDatasetFactory.from_delimited_files(path,
+```python
+
+ds = TabularDatasetFactory.from_delimited_files(path,
+
+```
                                                 validate=True,
                                                 include_path=False,
                                                 infer_column_types=True,
