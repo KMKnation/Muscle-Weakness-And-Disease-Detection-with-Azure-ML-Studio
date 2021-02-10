@@ -1,4 +1,3 @@
-from sklearn.linear_model import LogisticRegression
 import argparse
 import os
 import numpy as np
@@ -7,10 +6,10 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
+from sklearn.ensemble import RandomForestClassifier
 
-# TODO: Create TabularDataset using TabularDatasetFactory
 # Data is located at:
-path = "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
+path = "https://3366d6aa338e.ngrok.io/data.csv"
 
 ds = TabularDatasetFactory.from_delimited_files(path,
                                                 validate=True,
@@ -22,34 +21,19 @@ ds = TabularDatasetFactory.from_delimited_files(path,
                                                 empty_as_string=False)
 
 
-def clean_data(data):
-    # Dict for cleaning data
-    months = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7, "aug": 8, "sep": 9, "oct": 10,
-              "nov": 11, "dec": 12}
-    weekdays = {"mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6, "sun": 7}
-
+def clean_data(raw_df):
     # Clean and one hot encode data
-    x_df = data.to_pandas_dataframe().dropna()
-    jobs = pd.get_dummies(x_df.job, prefix="job")
-    x_df.drop("job", inplace=True, axis=1)
-    x_df = x_df.join(jobs)
-    x_df["marital"] = x_df.marital.apply(lambda s: 1 if s == "married" else 0)
-    x_df["default"] = x_df.default.apply(lambda s: 1 if s == "yes" else 0)
-    x_df["housing"] = x_df.housing.apply(lambda s: 1 if s == "yes" else 0)
-    x_df["loan"] = x_df.loan.apply(lambda s: 1 if s == "yes" else 0)
-    contact = pd.get_dummies(x_df.contact, prefix="contact")
-    x_df.drop("contact", inplace=True, axis=1)
-    x_df = x_df.join(contact)
-    education = pd.get_dummies(x_df.education, prefix="education")
-    x_df.drop("education", inplace=True, axis=1)
-    x_df = x_df.join(education)
-    x_df["month"] = x_df.month.map(months)
-    x_df["day_of_week"] = x_df.day_of_week.map(weekdays)
-    x_df["poutcome"] = x_df.poutcome.apply(lambda s: 1 if s == "success" else 0)
+    raw_df = raw_df.to_pandas_dataframe().dropna()
+    raw_y = raw_df['Output']
+    del raw_df['Output']
+    del raw_df['Identification no']
+    raw_x = raw_df
 
-    y_df = x_df.pop("y").apply(lambda s: 1 if s == "yes" else 0)
+    labels_dict = {"Control": 0, "Disease": 1, "SPG4": 2}
 
-    return x_df, y_df
+    x = pd.get_dummies(raw_x)
+    y = raw_y.replace(labels_dict)
+    return x, y
 
 
 x, y = clean_data(ds)
@@ -65,19 +49,19 @@ def main():
     # Add arguments to script
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--C', type=float, default=1.0,
-                        help="Inverse of regularization strength. Smaller values cause stronger regularization")
-    parser.add_argument('--max_iter', type=int, default=100, help="Maximum number of iterations to converge")
+    parser.add_argument('--d', type=int, default=2,
+                        help="max depth for the random forest")
+    parser.add_argument('--n', type=int, default=8, help="Maximum number of estimators")
 
     args = parser.parse_args()
 
-    run.log("Regularization Strength:", np.float(args.C))
-    run.log("Max iterations:", np.int(args.max_iter))
+    run.log("max_depth:", np.int(args.d))
+    run.log("Maximum number of estimators:", np.int(args.n))
 
-    model = LogisticRegression(C=args.C, max_iter=args.max_iter).fit(x_train, y_train)
+    model = RandomForestClassifier(n_estimators=args.n, max_depth=args.d).fit(x_train, y_train)
 
-    os.makedirs('outputs',exist_ok = True)
-    joblib.dump(model,'outputs/model.joblib')
+    os.makedirs('outputs', exist_ok=True)
+    joblib.dump(model, 'outputs/model.joblib')
 
     accuracy = model.score(x_test, y_test)
     run.log("Accuracy", np.float(accuracy))
