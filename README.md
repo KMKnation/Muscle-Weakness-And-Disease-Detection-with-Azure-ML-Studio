@@ -44,8 +44,6 @@ and then using **TabularDatasetFactory** to retrive the data in workspace.
 ```python
 
 ds = TabularDatasetFactory.from_delimited_files(path,
-
-```
                                                 validate=True,
                                                 include_path=False,
                                                 infer_column_types=True,
@@ -53,6 +51,8 @@ ds = TabularDatasetFactory.from_delimited_files(path,
                                                 header=True,
                                                 support_multi_line=False,
                                                 empty_as_string=False)
+```
+
 ## Automated ML
 *TODO*: Give an overview of the `automl` settings and configuration you used for this experiment
 
