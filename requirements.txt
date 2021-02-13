@@ -1,7 +1,9 @@
 adal==1.2.6
 applicationinsights==0.11.9
 azure-common==1.1.26
+azure-core==1.11.0
 azure-graphrbac==0.61.1
+azure-identity==1.4.1
 azure-mgmt-authorization==0.61.0
 azure-mgmt-containerregistry==2.8.0
 azure-mgmt-keyvault==2.2.0
@@ -9,6 +11,10 @@ azure-mgmt-resource==12.0.0
 azure-mgmt-storage==11.2.0
 azureml==0.2.7
 azureml-core==1.22.0
+azureml-dataprep==2.9.1
+azureml-dataprep-native==29.0.0
+azureml-dataprep-rslex==1.7.0
+azureml-dataset-runtime==1.22.0
 azureml-telemetry==1.22.0
 azureml-train==1.22.0
 azureml-train-core==1.22.0
@@ -18,9 +24,12 @@ backports.weakref==1.0.post1
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
+cloudpickle==1.6.0
 contextlib2==0.6.0.post1
 cryptography==3.4.3
+distro==1.5.0
 docker==4.4.1
+dotnetcore2==2.1.20
 idna==2.10
 importlib-metadata==3.4.0
 isodate==0.6.0
@@ -28,6 +37,8 @@ jeepney==0.6.0
 jmespath==0.10.0
 joblib==1.0.0
 jsonpickle==2.0.0
+msal==1.9.0
+msal-extensions==0.2.2
 msrest==0.6.21
 msrestazure==0.6.4
 ndg-httpsclient==0.5.1
@@ -35,6 +46,8 @@ numpy==1.19.5
 oauthlib==3.1.0
 pandas==1.1.5
 pathspec==0.8.1
+portalocker==1.7.1
+pyarrow==1.0.1
 pyasn1==0.4.8
 pycparser==2.20
 PyJWT==1.7.1
