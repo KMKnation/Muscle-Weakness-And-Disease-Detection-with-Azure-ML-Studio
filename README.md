@@ -74,30 +74,149 @@ automl_config = AutoMLConfig(task="classification",
                             **automl_settings)
 
 ```
-As you can see in above config, Our primary metric is **accuracy** which is the target for AutoML to improve.
+As you can see in above config, Our primary metric is **accuracy** which is the target for AutoML to improve also we have specified some params like following.
+- *experiment_timeout_minutes*: To stop our process after 30 minutes.
+- *n_cross_validations*: To do 5 fold validation on dataset
+- *max_concurrent_iterations*: To achieve concurrency, we have specified 4 as count to use that number of cluster to run the process concurrently
+- *enable_early_stopping*: We made this param as True to stop the process early, if model is not improving after some iterations,
+- *enable_voting_ensemble*: We made this param as False as we don't want combination of diffrent algorithm as output.
+- *enable_stack_ensemble*: We made this param as False as we don't want stack of diffrent algorithm as output.
+
 
 ### Results
-*TODO*: What are the results you got with your automated ML model? What were the parameters of the model? How could you have improved it?
+We got **97.86**% accuracy with automated ML model.
+The params of the best model (**XGBoostClassifier**) is following.
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
+```python
+XGBoostClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+                    colsample_bynode=1, colsample_bytree=0.9, eta=0.001, gamma=0,
+                    grow_policy='lossguide', learning_rate=0.1, max_bin=255,
+                    max_delta_step=0, max_depth=10, max_leaves=7,
+                    min_child_weight=1, missing=nan, n_estimators=100, n_jobs=1,
+                    nthread=None, objective='multi:softprob', random_state=0,
+                    reg_alpha=0, reg_lambda=0.20833333333333334,
+                    scale_pos_weight=1, seed=None, silent=None, subsample=0.6,
+                    tree_method='hist', verbose=-10, verbosity=0))
+```
+
+However, we could improved this model through removing some features from our dataset which are not that important in making the decision.
+
+###### Best Model
+
+![BestModel](./images/5-automl-best-model.PNG)
+
+![BestModelComplete](./images/6-automl-complete.PNG)
+
+###### AutoML Widget
+
+![AutoMLWidget](./images/14-automl-widget.PNG)
 
 ## Hyperparameter Tuning
-*TODO*: What kind of model did you choose for this experiment and why? Give an overview of the types of parameters and their ranges used for the hyperparameter search
 
+We have used RandomForestClassifier algorithm as we are solving the "classification" problem. RandomForest is consist of multiple DecisionTrees algorithm which play an important part in the output of the RandomForest.
+
+We have applied an eary stopping policy to stop the training process after it starts to degrading the accuracy with increased iteration count.
+
+For the hyperparam tuninng, we have used RandomParameterSampling where we used random depth upto 50 for the model and also given some choices ranging from 50 to 250 for the number of estimators param of the model.
+
+
+<u>Code Snippet:</u>
+
+```python
+
+param_sampling = RandomParameterSampling({
+    "d": randint(50),
+    "n": choice(50,100,150,200,250)
+});
+
+
+hyperdrive_run_config = HyperDriveConfig(run_config = estimator, 
+                             hyperparameter_sampling = param_sampling,
+                             policy = early_termination_policy,
+                             primary_metric_name = 'Accuracy', 
+                             primary_metric_goal = PrimaryMetricGoal.MAXIMIZE, 
+                             max_total_runs = 20,
+                             max_concurrent_runs = 5)
+
+```
+
+The primary metric for our algo is "Accuracy". The hyperdrive willl try to improve the accuracy by giving provided choices of hyperparams. We also specified max_total_runs param which denotes as a param to run number of iteration to complete the hyper drive for training the model. Also we have provided "max_concurrent_runs" option to run the iterations of hyperdrive paralley so the process gets complete faster.
 
 ### Results
-*TODO*: What are the results you got with your model? What were the parameters of the model? How could you have improved it?
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
+We got **96.27** accuracy with following paramerters
+
+    ['--d', '25', '--n', '200'] 
+
+However, we could improved this model through adding more hyperparams for the model so that we may achieve some more accuracy.
+
+![BestModel](./images/12-hyperdrive-running-accuracy.PNG)
+
+![BestModelComplete](./images/13-best-model-hyperdrive.PNG)
+
+###### HyperDrive Widget
+
+![AutoMLWidget](./images/15-hyper-drive-widget.PNG)
 
 ## Model Deployment
-*TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
+
+We have deployed the (XGBoostClassifier) model who got 97.86 through Automated ML experiment. We also have provided sample python file named [endpoint.py](./endpoint.py)
+where we have to specify our endpoint URL and authentication key to make successful rest api call.
+
+We also provided the sample input data in following json structure to query the endpoint.
+
+```python
+
+data = {
+    "data":
+    [
+        {
+            'Phenotype1': "0",
+            'Phenotype2': "0",
+            'Phenotype3': "0",
+            'Phenotype4': "0",
+            'Phenotype5': "0",
+            'Phenotype6': "0",
+            'Phenotype7': "0",
+            'Phenotype8': "0",
+            'Phenotype9': "0",
+            'Phenotype10': "0",
+            'Phenotype11': "0",
+            'Phenotype12': "0",
+            'Phenotype13': "0",
+            'Phenotype14': "0",
+            'Phenotype15': "0",
+            'Phenotype16': "0",
+            'Phenotype17': "0",
+            'Phenotype18': "0",
+            'Phenotype19': "0",
+            'Phenotype20': "0",
+            'Phenotype21': "0",
+            'Phenotype22': "0",
+            'Phenotype23': "0",
+            'Phenotype24': "0",
+            'Phenotype25': "0",
+            'Phenotype26': "0",
+            'Phenotype27': "0",
+        },
+    ],
+}
+
+```
 
 ## Screen Recording
-*TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
-- A working model
-- Demo of the deployed  model
-- Demo of a sample request sent to the endpoint and its response
+
+[![Demo video](https://i.ytimg.com/vi/fU-olKCBjyU/0.jpg)](https://youtu.be/fU-olKCBjyU)
+
+URL: [https://youtu.be/fU-olKCBjyU](https://youtu.be/fU-olKCBjyU)
+
 
 ## Standout Suggestions
-*TODO (Optional):* This is where you can provide information about any standout suggestions that you have attempted.
+- We used private clinical data which was in its RAW format and we never thought to build model with this data.
+Now after applying this medical data, we amazed with the results we got in very minimum time.
+
+- As we have to use thirdparty dataset, we have hosted this data in local computer and hosted that file for publich through ngrok and the accessed that file in azure through ngrok URL.
+
+    path = "https://3366d6aa338e.ngrok.io/data.csv"
+
+    (Note: The above path is temporary and it will be expired after sometime)
