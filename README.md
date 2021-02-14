@@ -27,6 +27,10 @@ The dataset contains 3 categories:
    Indicates that the muscle weakness is there due to some desease.
 
 
+![Dataset](./images/0-dataset.PNG)
+
+The above screeenshot provides information about some features and observation and total counts of target variable.
+
 ### Task
 We are going to predict the status of muscle's weakness of the body. Human muscles are one of those part which gets started to weaken from the born. After some years, the muscles tissues starts to stiff. In  this case, we have to take more care of this muscles. Though, If we detect the status of muscle weakness in early stage then we might save many people from the illness cause by these muscles.
 
@@ -105,11 +109,17 @@ However, we could improved this model through removing some features from our da
 
 ![BestModel](./images/5-automl-best-model.PNG)
 
+The above screeenshot provides information about AutoML experiment in Running state where we can find out some ML model's details that were complete.
+
 ![BestModelComplete](./images/6-automl-complete.PNG)
+
+The above screeenshot provides information about AutoML experiment in Completed state where we can find out the best model which is XGBoost in our case.
 
 ###### AutoML Widget
 
 ![AutoMLWidget](./images/14-automl-widget.PNG)
+
+The above screeenshot provides information about logs recorded in Run Widget.
 
 ## Hyperparameter Tuning
 
@@ -152,11 +162,17 @@ However, we could improved this model through adding more hyperparams for the mo
 
 ![BestModel](./images/12-hyperdrive-running-accuracy.PNG)
 
+The above screenshot it about HyperDrive in running state where we can see the completed iterations with achieved accuracy in each iteration.
+
 ![BestModelComplete](./images/13-best-model-hyperdrive.PNG)
+
+The above screenshot is about completed HyperDrive experiment where we can get the best model's hyperparams which is 200 number of estimators with 25 depth.
 
 ###### HyperDrive Widget
 
 ![AutoMLWidget](./images/15-hyper-drive-widget.PNG)
+
+The above screeenshot provides information about logs recorded in Run Widget.
 
 ## Model Deployment
 
